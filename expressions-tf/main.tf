@@ -18,13 +18,14 @@ resource "docker_image" "nginx" {
 
 # available from random.random_pet
 resource "random_pet" "nginx" {
+  count  = 4
   length = 2
 }
 
 resource "docker_container" "nginx" {
   count = 4
   image = docker_image.nginx.image_id
-  name  = "nginx-${random_pet.nginx.id}-${count.index}"
+  name  = "nginx-${random_pet.nginx[count.index].id}-${count.index}"
   # name = "nginx-hoppy-frog-0"
 
   ports {
@@ -42,7 +43,7 @@ resource "docker_image" "redis" {
 resource "time_sleep" "wait_120_seconds" {
   depends_on = [docker_image.redis]
 
-  create_duration = "120s"
+  create_duration = "5s"
 }
 
 resource "docker_container" "data" {
